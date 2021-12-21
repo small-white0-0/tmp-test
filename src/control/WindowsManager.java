@@ -3,6 +3,8 @@ package control;
 import java.awt.Font;
 import java.sql.*;
 
+import javax.swing.JOptionPane;
+
 import gui.Login;
 import gui.LoginStudent;
 import gui.LoginTeacher;
@@ -28,13 +30,38 @@ public class WindowsManager {
 	
 	public static void init() {
 		Windows.InitGlobalFont(new Font("宋体", Font.PLAIN, 20));
-//		loginWindow = new Login();
-//		currentWindow = loginWindow;
-		teacherWindow = new LoginTeacher();
-		currentWindow = teacherWindow;
+		loginWindow = new Login();
+		currentWindow = loginWindow;
+//		teacherWindow = new LoginTeacher();
+//		currentWindow = teacherWindow;
 		currentWindow.displayFram();
 	}
-
+	
+	public static void switchWindowSafe(WindowName toWindowName) {
+		switch (toWindowName) {
+		case register:
+			switchWindow(toWindowName);
+			break;
+		case login:
+			switchWindow(toWindowName);
+			break;
+		case student:
+			if (DatabaseManager.loginToStu(((Login) currentWindow).getId(),((Login) currentWindow).getPassword())) {
+				switchWindow(toWindowName);
+			} else {
+				JOptionPane.showMessageDialog(null, "帐号或密码错误");
+			}
+		case teacher:
+			if (DatabaseManager.loginToTea(((Login) currentWindow).getId(),((Login) currentWindow).getPassword())) {
+				switchWindow(toWindowName);
+			} else {
+				JOptionPane.showMessageDialog(null, "帐号或密码错误");
+			}
+		default:
+			break;
+		}
+	}
+	
 	public static void switchWindow(WindowName toWindowName) {
 		currentWindow.hideFram();
 		switch (toWindowName) {
@@ -53,7 +80,7 @@ public class WindowsManager {
 			break;
 		case student:
 			if (studentWindow == null) {
-				studentWindow = new LoginStudent(null);
+				studentWindow = new LoginStudent();
 			}
 			currentWindow = studentWindow;
 			break;

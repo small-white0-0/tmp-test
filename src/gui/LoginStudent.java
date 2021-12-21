@@ -17,18 +17,18 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 import control.DatabaseManager;
-import databaseTable.DatabaseTable;
-import databaseTable.Student;
+import databaseTable.row.DatabaseTable;
+import databaseTable.row.StudentRow;
 import guiSuperclass.Windows;
 
 public class LoginStudent extends Windows implements ActionListener{
 
-	Student student;
+	StudentRow student = DatabaseManager.getUser();
 	JComboBox<String> className;
 	JTextField gradeShow;
 	
 	
-	public LoginStudent(Student student) {
+	public LoginStudent() {
 		this.student = student;
 		JPanel infomation = createInfomationPanel();
 		JPanel grade = createGradePanel();
@@ -51,7 +51,7 @@ public class LoginStudent extends Windows implements ActionListener{
 		JLabel id = new JLabel("学号:"+student.getId());
 		JLabel name = new JLabel("姓名:"+student.getName());
 		JLabel schoolClass = new JLabel("班级:"+student.getSchoolClass());
-		JLabel major = new JLabel("专业:"+student.major);
+		JLabel major = new JLabel("专业:"+student.getMajor());
 		GridLayout layout = new GridLayout();
 		layout.setColumns(1);
 		layout.setRows(4);
@@ -93,17 +93,16 @@ public class LoginStudent extends Windows implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e) {
 		e.getSource();
-		String grade = "chidn:90";
-//		String grade = student.getGrade(className.getSelectedItem());
+		String grade = DatabaseManager.getGrade(className.getSelectedItem().toString());
 		this.gradeShow.setText(grade);
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		Student a = new Student();
-		LoginStudent n = new LoginStudent(a);
-		n.displayFram();
+//		StudentRow a = new StudentRow();
+//		LoginStudent n = new LoginStudent(a);
+//		n.displayFram();
 	}
 
 }

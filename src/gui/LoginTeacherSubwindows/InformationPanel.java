@@ -15,8 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import control.DatabaseManager;
-import databaseTable.DatabaseTable;
-import databaseTable.Student;
+import databaseTable.row.DatabaseTable;
+import databaseTable.row.StudentRow;
 
 public class InformationPanel extends JPanel implements ActionListener{
 
@@ -27,22 +27,6 @@ public class InformationPanel extends JPanel implements ActionListener{
 	
 	private JTable showTable;
 	private DefaultTableModel tableModel;
-	
-	private String[] header = new String[] {"id","name","pwd"};
-	
-	public InformationPanel () {
-		this.header = new String[] {
-				"id","courseName","redir"
-		};
-		this.databaseTable = databaseTable;
-		
-		this.setLayout(new BorderLayout());
-		this.add(createInputPanel(),BorderLayout.NORTH);
-		this.add(createShowPane());
-		this.setBackground(Color.white);
-		this.setOpaque(true);
-		
-	}
 	
 	public InformationPanel(DatabaseTable databaseTable) {
 		this.databaseTable = databaseTable;
@@ -100,7 +84,7 @@ public class InformationPanel extends JPanel implements ActionListener{
 		
 	}
 	
-	public void addRow(Student student) {
+	public void addRow(StudentRow student) {
 		
 	}
 	

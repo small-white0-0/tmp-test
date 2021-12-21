@@ -21,7 +21,7 @@ import javax.swing.event.MouseInputListener;
 
 import control.WindowsManager;
 import control.WindowsManager.WindowName;
-import databaseTable.Student;
+import databaseTable.row.StudentRow;
 import gui.LoginTeacherSubwindows.InformationPanel;
 import guiSuperclass.Windows;
 
@@ -148,7 +148,7 @@ public class LoginTeacher extends Windows implements ActionListener{
 		} else if (object == this.confirmButton) {
 			System.out.println("confirm");
 		} else if (object == this.exitButton) {
-			WindowsManager.switchWindow(WindowName.login);
+			WindowsManager.switchWindowSafe(WindowName.login);
 		}
 		
 	}

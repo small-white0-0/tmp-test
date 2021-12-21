@@ -92,7 +92,7 @@ public class Register extends Before_login implements ActionListener {
 		// TODO Auto-generated method stub
 		if (e.getSource() == this.leftButton) {
 			
-			WindowsManager.switchWindow(WindowName.login);
+			WindowsManager.switchWindowSafe(WindowName.login);
 			
 		} else if (e.getSource() == this.rightButton) {
 			
@@ -104,10 +104,10 @@ public class Register extends Before_login implements ActionListener {
 				this.warning.setText(null);
 				
 				if (this.select == Vocation.student) {
-					WindowsManager.switchWindow(WindowName.student);
+					WindowsManager.switchWindowSafe(WindowName.student);
 				}
 				else {
-					WindowsManager.switchWindow(WindowName.teacher);
+					WindowsManager.switchWindowSafe(WindowName.teacher);
 				}
 				
 			}

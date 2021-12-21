@@ -17,6 +17,9 @@ import guiSuperclass.Windows;
 
 public class Login extends Before_login implements ActionListener{
 	
+	private JTextField id;
+	private JPasswordField password;
+	
 	public Login() {
 		super("登陆界面", "注册", "登陆");
 		addButtonsListener(this, this);
@@ -34,6 +37,10 @@ public class Login extends Before_login implements ActionListener{
 		JLabel lable_passwd = new JLabel("password:");
 		JTextField id = new JTextField(10);
 		JPasswordField password = new JPasswordField(10);
+		
+		this.id = id;
+		this.password = password;
+		
 		inputs.add(new JLabel());
 		inputs.add(new JLabel());
 		inputs.add(lable_id);
@@ -46,17 +53,27 @@ public class Login extends Before_login implements ActionListener{
 		return inputs;
 	}
 	
+	
+	
+	public String getId() {
+		return id.toString();
+	}
+
+	public String getPassword() {
+		return password.toString();
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		
 		if (e.getSource() == this.leftButton) {
 			System.out.println("oooo");
-			WindowsManager.switchWindow(WindowName.register);
+			WindowsManager.switchWindowSafe(WindowName.register);
 		}
 		else if (e.getSource() == this.rightButton && this.select == Vocation.student) {
-			WindowsManager.switchWindow(WindowName.student);
+			WindowsManager.switchWindowSafe(WindowName.student);
 		}
 		else if (e.getSource() == this.rightButton && this.select == Vocation.teacher) {
-			WindowsManager.switchWindow(WindowName.teacher);
+			WindowsManager.switchWindowSafe(WindowName.teacher);
 		}
 		
 	}
