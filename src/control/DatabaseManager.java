@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import javax.swing.ComboBoxModel;
+
 public class DatabaseManager {
 
 	public static void main(String[] args) {
@@ -35,5 +37,10 @@ public class DatabaseManager {
 			// TODO: handle exception
 		}
 	    
+	}
+
+	public static String [] getClassesName() {
+		// TODO Auto-generated method stub
+		return new String[] {"chinese","english"};
 	}
 }
