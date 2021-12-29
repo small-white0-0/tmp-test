@@ -10,7 +10,6 @@ import javax.swing.plaf.FontUIResource;
 public abstract class Windows {
 
 	protected JFrame theFrame;
-//	public abstract void reset() ;
 	public void displayFram() {
 		theFrame.setVisible(true);
 		theFrame.repaint();
@@ -30,6 +29,14 @@ public abstract class Windows {
 	
 	public void hideFram() {
 		theFrame.setVisible(false);
+		theFrame = null;
 	}
 	
+	public void diapose() {
+		theFrame.dispose();
+	}
+	
+	public JFrame getTheFrame() {
+		return theFrame;
+	}
 }

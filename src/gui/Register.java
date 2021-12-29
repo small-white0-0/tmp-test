@@ -13,10 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import checks.CheckInputs;
 import control.WindowsManager;
 import control.WindowsManager.WindowName;
 import guiSuperclass.Before_login;
+import smallTools.CheckInputs;
 
 public class Register extends Before_login implements ActionListener {
 

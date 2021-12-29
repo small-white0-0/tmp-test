@@ -45,9 +45,23 @@ public class CourseRow extends DatabaseTable {
 		
 		ResultSet set;
 		try {
-			set = SqlOperation.select("studentWithCourse", makeArray("*"), makeArray("course"), makeArray(course));
+			set = SqlOperation.select("course", makeArray("*"), makeArray("course"), makeArray(course));
 			set.next();
 			re = set.getString("id");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return re;
+	}
+	
+	public static String getCourseName(String id) {
+		String re = null;
+		try {
+			ResultSet set = SqlOperation.select("final.course", makeArray("id"), makeArray(id));
+			set.next();
+			re = set.getString("course");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

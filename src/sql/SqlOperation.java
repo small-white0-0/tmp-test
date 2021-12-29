@@ -1,5 +1,6 @@
 package sql;
 
+import java.io.ObjectInputStream.GetField;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -33,14 +34,14 @@ public class SqlOperation {
 			JOptionPane.showMessageDialog(null, "数据库连接失败");
 			e.printStackTrace();
 		}
-//	    
-//	   try {
-//		Statement st = connection.createStatement();
-//		st.execute("use final;");
-//	} catch (SQLException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
+	    
+	   try {
+		Statement st = connection.createStatement();
+		st.execute("use final;");
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	}
 	
 	public static void sqlDisconnect() {
@@ -65,30 +66,37 @@ public class SqlOperation {
 		return re;
 	}
 	
-	private static String linkString(String[] string1, String[] string2 , String s) {
-		for (int i = 0; i < string1.length; i++) {
-			string1[i] += "=" + string2[i];
+	private static String[] safeString(String[] str) {
+		for (int i = 0; i < str.length; i++) {
+			str[i] = "'"+str[i]+"'";
 		}
-		return linkString(string1, s);
+		return str;
 	}
 	
-//	private static String linkString(String[] string1, String[] string2 , String s,String s2) {
-//		for (int i = 0; i < string1.length; i++) {
-//			string1[i] += s2 + string2[i];
-//		}
-//		return linkString(string1, s);
-//	}
+	private static String linkString(String[] string1, String[] string2 , String s) {
+		String[] re = new String[string1.length];
+		for (int i = 0; i < string1.length; i++) {
+			re[i] = string1[i] + "=" + string2[i];
+		}
+		return linkString(re, s);
+	}
 	
+	private static String linkString(String[] string1, String[] string2 ,String s1, String s){
+		String[] re = new String[string1.length];
+		for (int i = 0; i < string1.length; i++) {
+			re[i] = string1[i] + s1 + string2[i];
+		}
+		return linkString(re, s);
+	}
 	
 	public static void add(String tableName, String[] attributes, String[] values) throws SQLException {
 		if (connection == null) {
 			sqlConnetct();
 		}
-		PreparedStatement ps = connection.prepareStatement("INSERT INTO ?(?) VALUES (?) ;");
-		ps.setString(1, tableName);
-		ps.setString(2, linkString(attributes,","));
-		ps.setString(3, linkString(values, ","));
-		ps.executeQuery();
+		String sql = "INSERT INTO "+tableName+"("+linkString(attributes, ",")+")"+ " VALUES ("+linkString(safeString(values), ",")+")";
+		Statement stm = connection.createStatement();
+		System.out.println(sql);
+		stm.execute(sql+";");
 		
 	}
 	
@@ -96,10 +104,10 @@ public class SqlOperation {
 		if (connection == null) {
 			sqlConnetct();
 		}
-		PreparedStatement ps = connection.prepareStatement("DELETE FROM ? WHERE ? ;");
-		ps.setString(1, tableName);
-		ps.setString(2, linkString(attributes, values, " and "));
-		ps.execute();
+		Statement stm = connection.createStatement();
+		String sql = "delete from "+tableName+" where "+linkString(attributes, safeString(values)," and ");
+		System.out.println(sql);
+		stm.execute(sql);
 		
 	}
 	
@@ -107,33 +115,84 @@ public class SqlOperation {
 		if (connection == null) {
 			sqlConnetct();
 		}
-		PreparedStatement ps = connection.prepareStatement("update ? set ? ?;");
-		ps.setString(1, tableName);
-		ps.setString(2, linkString(setAttributes, setValues, ","));
-		ps.setString(3, "where" + linkString(attributes, values, " and "));
-		ps.execute();
+		
+		Statement stm = connection.createStatement();
+		String sql = "update "+tableName+" set "+linkString(setAttributes, safeString(setValues), ",");
+		sql += " where "+linkString(attributes, safeString(values), " and ");
+		System.out.println(sql);
+		stm.execute(sql+";");
+	}
+	
+	public static void update(String tableName, String setAttributes, String setValues, String[] attributes, String[] values) throws SQLException {
+		if (connection == null) {
+			sqlConnetct();
+		}
+		
+		Statement stm = connection.createStatement();
+		String sql = "update "+tableName+" set "+setAttributes + "= '" + setValues+"'";
+		sql += " where "+linkString(attributes, safeString(values), " and ");
+		System.out.println(sql);
+		stm.execute(sql+";");
 	}
 	
 	public static ResultSet select(String tableName, String[] colNames, String[] attributes, String[] values) throws SQLException{
 		if (connection == null) {
 			sqlConnetct();
 		}
-//		PreparedStatement ps = connection.prepareStatement("select ? from ? ?;");
-//		ps.setString(1, linkString(colNames, ","));
-//		ps.setString(2, tableName);
 		Statement stm = connection.createStatement();
 		String sql = "select "+linkString(colNames, ",")+" from "+tableName;
 		if (attributes != null && values != null) {
-//			ps.setString(3, "  where " + linkString(attributes, values, " and "));
-			sql+=" where " + linkString(attributes, values, " and ");
-		} else {
-//			ps.setString(3, null);
+			sql+=" where " + linkString(attributes, safeString(values), " and ");
+		}
+		System.out.println(sql);
+		return stm.executeQuery(sql+";");
+	}
+	public static ResultSet select(String tableName, String[] attributes, String[] values) throws SQLException{
+		if (connection == null) {
+			sqlConnetct();
+		}
+		Statement stm = connection.createStatement();
+		String sql = "select "+" * "+" from "+tableName;
+		if (attributes != null && values != null) {
+			sql+=" where " + linkString(attributes, safeString(values), " and ");
 		}
 		return stm.executeQuery(sql+";");
 	}
 	
+	public static ResultSet selectLike(String tableName, String[] attributes, String[] values) throws SQLException{
+		if (connection == null) {
+			sqlConnetct();
+		}
+		Statement stm = connection.createStatement();
+		String sql = "select "+" * "+" from "+tableName;
+		if (attributes != null && values != null) {
+			for (String string : values) {
+				string = "%"+string+"%";
+			}
+			sql+=" where " + linkString(attributes, safeString(values)," like " ," or ");
+		}
+		return stm.executeQuery(sql+";");
+		
+	}
 	
+	public static ResultSet selectOr(String tableName, String[] attributes, String[] values) throws SQLException{
+		if (connection == null) {
+			sqlConnetct();
+		}
+		Statement stm = connection.createStatement();
+		String sql = "select "+" * "+" from "+tableName;
+		if (attributes != null && values != null) {
+			sql+=" where " + linkString(attributes, safeString(values), " or ");
+		}
+		return stm.executeQuery(sql+";");
+	}
 	
+	public static Connection getConnection() {
+		if (connection == null) {
+			sqlConnetct();
+		}
+		return connection;
+	}
 	
 	public static ResultSet getHeaders(String tableName) throws SQLException {
 		if (connection == null) {
@@ -144,7 +203,7 @@ public class SqlOperation {
 		return ps.executeQuery();
 	}
 	
-	private static String[] makeArray(String ... str) {
+	public static String[] makeArray(String ... str) {
 		String[] re = new String[str.length];
 		re = str.clone();
 		return re;
@@ -152,6 +211,11 @@ public class SqlOperation {
 	public static void main(String[] args) throws SQLException {
 		SqlOperation.sqlConnetct();
 		System.out.println("ok");
-		SqlOperation.select("final.course", makeArray("*"), makeArray("id"),makeArray("1"));
+//		ResultSet set = SqlOperation.add("final.course", makeArray("*"), makeArray("id"),makeArray("1"));
+//		SqlOperation.add("course", makeArray("course","credit"), makeArray("chinese","3"));
+		SqlOperation.update("final.course", makeArray("credit","course"), makeArray("10","chinese"), makeArray("course"), makeArray("10"));
+		SqlOperation.delete("final.course", makeArray("course"), makeArray("chinese"));
+//		set.next();
+//		System.out.println(set.getString("course"));
 	}
 }

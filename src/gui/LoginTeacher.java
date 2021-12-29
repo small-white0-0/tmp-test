@@ -10,11 +10,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
@@ -24,6 +26,7 @@ import control.WindowsManager.WindowName;
 import databaseTable.row.StudentRow;
 import gui.LoginTeacherSubwindows.InformationPanel;
 import guiSuperclass.Windows;
+import sql.SqlOperation;
 
 public class LoginTeacher extends Windows implements ActionListener{
 
@@ -39,8 +42,9 @@ public class LoginTeacher extends Windows implements ActionListener{
 	private JButton confirmButton = new JButton("应用修改");
 	private JButton exitButton = new JButton("退出");
 	
-	private InformationPanel studentInformation = new InformationPanel(null);
-	private InformationPanel gradeInformation = new InformationPanel();
+	private InformationPanel studentInformation = new InformationPanel("student",SqlOperation.makeArray("学号","姓名","班级","专业"),new int[] {0});
+	private InformationPanel gradeInformation = new InformationPanel("studentWithCourse",SqlOperation.makeArray("学号","姓名","课程","分数"),new int[] {0});
+	private InformationPanel showedPane = studentInformation;
 	
 	private JPanel labelsPanel;
 	private JPanel buttonsPanel;
@@ -48,10 +52,16 @@ public class LoginTeacher extends Windows implements ActionListener{
 	private LabelMouselistener labelMouselistener = new LabelMouselistener();
 //	private
 	
+	private Vector<String> tmpData;
+	
 	public LoginTeacher() {
 		theFrame = createTheFrame("老师");
 	}
 	
+	public void reset() {
+		theFrame.dispose();
+		theFrame = createTheFrame("学生");
+	}
 	
 	public JFrame createTheFrame(String WindowName) {
 		JFrame theFrame = new JFrame(WindowName);
@@ -125,11 +135,14 @@ public class LoginTeacher extends Windows implements ActionListener{
 			//更改显示面板
 			theFrame.getContentPane().remove(gradeInformation);
 			theFrame.getContentPane().add(studentInformation);
+			showedPane = studentInformation;
 		} else if(toPane == informationPane.grade){
 			this.studentLabel.setOpaque(false);
 			this.gradeLabel.setOpaque(true);
+			
 			theFrame.getContentPane().remove(studentInformation);
 			theFrame.getContentPane().add(gradeInformation);
+			showedPane = gradeInformation;
 		}
 		displayFram();
 	}
@@ -143,10 +156,18 @@ public class LoginTeacher extends Windows implements ActionListener{
 		
 		if (object == this.addButton) {
 			System.out.println("增加");
+			JOptionPane.showMessageDialog(null, "请在新添加的空行中输入信息");
+			showedPane.addRow();
 		} else if (object == this.deleteButton) {
 			System.out.println("delete");
+			if (showedPane.deleteRow() == -1) {
+				JOptionPane.showMessageDialog(null, "没有行被选中");
+			}
 		} else if (object == this.confirmButton) {
 			System.out.println("confirm");
+			if (showedPane.confirm() != 0) {
+				JOptionPane.showMessageDialog(null, "请检查输入的课程名，学生名，是否存在;");
+			}
 		} else if (object == this.exitButton) {
 			WindowsManager.switchWindowSafe(WindowName.login);
 		}
@@ -165,6 +186,13 @@ public class LoginTeacher extends Windows implements ActionListener{
 			} else if (object == gradeLabel) {
 				switchInformationpane(informationPane.grade);
 			}
+		}
+	}
+	
+	public void setTmpData(String[] str) {
+		tmpData.removeAllElements();
+		for (String string : str) {
+			this.tmpData.add(string);
 		}
 	}
 	

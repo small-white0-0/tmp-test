@@ -12,11 +12,11 @@ public class StudentWithCourseRow extends DatabaseTable {
 	private int grade;
 	
 	public static String[] getCourseIds(String studentId) {
-		String tmp=null;
+		String tmp="";
 		try {
-			ResultSet set = SqlOperation.select("course", makeArray("*"), makeArray("studentId"), makeArray(studentId));
+			ResultSet set = SqlOperation.select("studentWithCourse", makeArray("*"), makeArray("studentId"), makeArray(studentId));
 			while (set.next()) {
-				if (tmp != null) {
+				if (! tmp.equals("")) {
 					tmp +=":";
 				}
 				tmp += set.getString("courseId");
@@ -26,5 +26,35 @@ public class StudentWithCourseRow extends DatabaseTable {
 			e.printStackTrace();
 		}
 		return tmp.split(":");
+	}
+	
+	public static String[] getGrade1(String studentId) {
+		String[] re = new String[2];
+		try {
+			ResultSet set = SqlOperation.select("final.studentWithCourse", makeArray("studentId"), makeArray(studentId));
+			set.next();
+			re[0] = set.getString("grade");
+			re[1] = set.getString("courseId");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			return null;
+		}
+		return re;
+	}
+	
+	public static String[] getGrade2(String courseId) {
+		String[] re = new String[2];
+		try {
+			ResultSet set = SqlOperation.select("final.studentWithCourse", makeArray("courseId"), makeArray(courseId));
+			set.next();
+			re[0] = set.getString("grade");
+			re[1] = set.getString("studentId");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			return null;
+		}
+		return re;
 	}
 }

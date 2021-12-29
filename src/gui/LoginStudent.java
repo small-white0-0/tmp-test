@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,29 +18,33 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 import control.DatabaseManager;
+import control.WindowsManager;
+import control.WindowsManager.WindowName;
 import databaseTable.row.DatabaseTable;
 import databaseTable.row.StudentRow;
 import guiSuperclass.Windows;
 
 public class LoginStudent extends Windows implements ActionListener{
-
+	
 	StudentRow student = DatabaseManager.getUser();
+	
 	JComboBox<String> className;
 	JTextField gradeShow;
-	
+	JButton exitButton;
 	
 	public LoginStudent() {
 		this.student = student;
-		JPanel infomation = createInfomationPanel();
-		JPanel grade = createGradePanel();
-		theFrame = createFrame("学生",infomation,grade);
+//		JPanel infomation = createInfomationPanel();
+//		JPanel grade = createGradePanel();
+//		theFrame = createFrame("学生",infomation,grade);
+		theFrame = createTheFrame("学生");
 	}
 	
-	private JFrame createFrame(String windowName, JPanel infomation, JPanel grade) {
+	private JFrame createTheFrame(String windowName) {
 		JFrame theFrame = new JFrame(windowName);
 		theFrame.getContentPane().setLayout(new BorderLayout(0, 0));
-		theFrame.getContentPane().add("West", infomation);
-		theFrame.getContentPane().add(grade);
+		theFrame.getContentPane().add("West", createInfomationPanel());
+		theFrame.getContentPane().add(createGradePanel());
 		theFrame.setSize(500, 400);
 		theFrame.setLocationRelativeTo(null);
 		theFrame.setResizable(false);
@@ -71,7 +76,8 @@ public class LoginStudent extends Windows implements ActionListener{
 		JPanel grade = new JPanel();
 		grade.setLayout(null);
 		//课程选择框
-		JComboBox<String> classesName = new JComboBox<String>(student.getClassesName());
+		JComboBox<String> classesName = new JComboBox<String>(DatabaseManager.getClassesName());
+//		JComboBox<String> classesName = new JComboBox<String>(new String[] {"ok"});
 //		classesName.setBackground(Color.black);
 		classesName.setBounds(120, 20, 100, 45);
 		classesName.addActionListener(this);
@@ -82,8 +88,15 @@ public class LoginStudent extends Windows implements ActionListener{
 		gradeShow.setBackground(Color.white);
 		gradeShow.setBounds(50, 100, 230, 80);
 		gradeShow.setEditable(false);
-		gradeShow.setText("Chinese: 98");
+		gradeShow.setText(DatabaseManager.getGrade(classesName.getSelectedItem().toString()));
 		this.gradeShow = gradeShow;
+		
+		//退出按钮
+		JButton exitButton = new JButton("退出");
+		exitButton.setBounds(260, 300, 70, 60);
+		exitButton.addActionListener(this);
+		grade.add(exitButton);
+		this.exitButton = exitButton;
 		
 		grade.add(classesName);
 		grade.add(gradeShow);
@@ -91,18 +104,28 @@ public class LoginStudent extends Windows implements ActionListener{
 		
 	}
 	
+	public void reset() {
+		theFrame.dispose();
+		theFrame = createTheFrame("学生");
+	}
+	
 	public void actionPerformed(ActionEvent e) {
-		e.getSource();
-		String grade = DatabaseManager.getGrade(className.getSelectedItem().toString());
-		this.gradeShow.setText(grade);
+		Object object = e.getSource();
+		if (object == this.className) {
+			String grade = DatabaseManager.getGrade(className.getSelectedItem().toString());
+			this.gradeShow.setText(grade);
+		} else {
+			WindowsManager.switchWindowSafe(WindowName.login);
+		}
+		
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 //		StudentRow a = new StudentRow();
-//		LoginStudent n = new LoginStudent(a);
-//		n.displayFram();
+		LoginStudent n = new LoginStudent();
+		n.displayFram();
 	}
 
 }

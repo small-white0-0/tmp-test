@@ -36,6 +36,7 @@ public abstract class Before_login extends Windows {
 		theFrame = createTheFrame(windowName,selects,input,buttons);
 	}
 
+
 	private JFrame createTheFrame(String windowName,JPanel selects, JPanel input, JPanel buttons) {
 		JFrame theFrame = new JFrame(windowName);
 		theFrame.getContentPane().add("North",selects);

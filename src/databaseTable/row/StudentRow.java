@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import control.DatabaseManager;
+import sql.SqlOperation;
 
 public class StudentRow extends DatabaseTable {
 
@@ -15,6 +16,10 @@ public class StudentRow extends DatabaseTable {
 	
 	public StudentRow(int id) {
 //		DatabaseManager.getStudent(id);
+		
+	}
+	
+	public StudentRow() {
 		
 	}
 	
@@ -61,15 +66,42 @@ public class StudentRow extends DatabaseTable {
 		this.major = major;
 	}
 
-
-
 	public String getId() {
 		return id;
 	}
 
-
-	public String[] getClassesName() {
-		return new String[] {"chind","fjdlsk"};
+//
+//	public String[] getClassesName() {
+//		return new String[] {"chind","fjdlsk"};
+//	}
+	
+	public static String getName(String id) {
+		String re = null;
+		try {
+			ResultSet set = SqlOperation.select("final.student", makeArray("id"), makeArray(id));
+			set.next();
+			re = set.getString("name");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return re;
+	}
+	
+	public static String getId(String name) {
+		String re = null;
+		
+		ResultSet set;
+		try {
+			set = SqlOperation.select("student", makeArray("*"), makeArray("name"), makeArray(name));
+			set.next();
+			re = set.getString("id");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return re;
 	}
 	
 }

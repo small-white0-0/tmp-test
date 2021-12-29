@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -24,7 +25,7 @@ public class Login extends Before_login implements ActionListener{
 		super("登陆界面", "注册", "登陆");
 		addButtonsListener(this, this);
 	}
-	
+
 	public JPanel createInput() {
 		JPanel inputs = new JPanel();
 		GridLayout layout = new GridLayout();
@@ -53,20 +54,21 @@ public class Login extends Before_login implements ActionListener{
 		return inputs;
 	}
 	
-	
+	public void resetPasswordField() {
+		this.password.setText("");
+	}
 	
 	public String getId() {
-		return id.toString();
+		return id.getText();
 	}
 
 	public String getPassword() {
-		return password.toString();
+		return new String(password.getPassword());
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		
 		if (e.getSource() == this.leftButton) {
-			System.out.println("oooo");
 			WindowsManager.switchWindowSafe(WindowName.register);
 		}
 		else if (e.getSource() == this.rightButton && this.select == Vocation.student) {
