@@ -6,9 +6,11 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -17,6 +19,9 @@ import control.WindowsManager;
 import control.WindowsManager.WindowName;
 import guiSuperclass.Before_login;
 import smallTools.CheckInputs;
+import smallTools.TableNames;
+import smallTools.Tools;
+import sql.SqlOperation;
 
 public class Register extends Before_login implements ActionListener {
 
@@ -25,7 +30,7 @@ public class Register extends Before_login implements ActionListener {
 	private JPasswordField secondPasswd;
 	private JLabel warning;
 	
-	private String idWarning = "id应是12位的数字";
+	private String idWarning = "id应是8位的数字";
 	private String pwdWarning = "密码不一致";
 	
 	public Register() {
@@ -102,13 +107,25 @@ public class Register extends Before_login implements ActionListener {
 				this.warning.setText(pwdWarning);
 			} else {
 				this.warning.setText(null);
-				
-				if (this.select == Vocation.student) {
-					WindowsManager.switchWindowSafe(WindowName.student);
+				try {
+					SqlOperation.add(TableNames.student,
+							Tools.makeArray("id","password"),
+							Tools.makeArray(getId(),getFirstPasswd()));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "注册失败");
+					return;
 				}
-				else {
-					WindowsManager.switchWindowSafe(WindowName.teacher);
-				}
+				JOptionPane.showMessageDialog(null, "注册成功");
+				WindowsManager.switchWindowSafe(WindowName.login);
+//				
+//				if (this.select == Vocation.student) {
+//					WindowsManager.switchWindowSafe(WindowName.student);
+//				}
+//				else {
+//					WindowsManager.switchWindowSafe(WindowName.teacher);
+//				}
 				
 			}
 		}

@@ -189,5 +189,21 @@ public class MyTableModel extends DefaultTableModel{
 			return super.getValueAt(row, column);
 		}
 	}
+
+	public void addRowSync(Vector<?> rowData) {
+		// TODO Auto-generated method stub
+		try {
+			SqlOperation.add(getTableName(),
+					Tools.makeArray(super.columnIdentifiers.toArray()),
+					Tools.makeArray(rowData.toArray()));
+		} catch (SQLException e) {
+			// TODO: handle exception
+//			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "添加失败");
+			return;
+		}
+		super.addRow(rowData);
+	}
+	
 	
 }

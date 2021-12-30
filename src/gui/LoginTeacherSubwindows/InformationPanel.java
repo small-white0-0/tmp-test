@@ -98,17 +98,17 @@ public class InformationPanel extends JPanel implements ActionListener{
 	}
 	
 	
-	
-	public void addRow() {
-		this.tableModel.addRow(new String[] {"default"});
-		scrollToRow(showTable.getRowCount());
+	public void addRow(Vector<String> row) {
+		this.tableModel.addRowSync(row);
 	}
 	
 	public int deleteRow() {
 		int selectedRow = showTable.getSelectedRow();
 		int count = showTable.getSelectedRowCount();
 		if(selectedRow != -1) {
-			this.tableModel.removeRow(selectedRow);
+			for (int i = 0; i < count; i++) {
+				this.tableModel.removeRow(selectedRow+i);
+			}
 		}
 		
 		return selectedRow;

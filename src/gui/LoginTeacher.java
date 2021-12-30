@@ -57,9 +57,7 @@ public class LoginTeacher extends Windows implements ActionListener{
 	private JPanel buttonsPanel;
 	
 	private LabelMouselistener labelMouselistener = new LabelMouselistener();
-//	private
-	
-	private Vector<String> tmpData = new Vector<String>();
+
 	
 	public LoginTeacher() {
 		theFrame = createTheFrame("老师");
@@ -203,29 +201,20 @@ public class LoginTeacher extends Windows implements ActionListener{
 		Object object = e.getSource();
 		
 		if (object == this.addButton) {
-//			System.out.println("增加");
-//			JOptionPane.showMessageDialog(null, "请在新添加的空行中输入信息");
-//			showedPane.addRow();
-			Windows addW;
+			Windows addW = null;
 			if (showedPane == studentInformation) {
 				addW = new AddStudent(this);
-			} else {
+			} else if(showedPane == gradeInformation) {
 				addW = new AddGrade(this);
 			}
 			addW.displayFram();
-			if (!tmpData.isEmpty()) {
-				System.out.print("tinajia数据"+tmpData.toString());
-			}
+			
 		} else if (object == this.deleteButton) {
 			System.out.println("delete");
 			if (showedPane.deleteRow() == -1) {
 				JOptionPane.showMessageDialog(null, "没有行被选中");
 			}
-//		} else if (object == this.confirmButton) {
-//			System.out.println("confirm");
-//			if (showedPane.confirm() != 0) {
-//				JOptionPane.showMessageDialog(null, "请检查输入的课程名，学生名，是否存在;");
-//			}
+			
 		} else if (object == this.exitButton) {
 			WindowsManager.switchWindowSafe(WindowName.login);
 		}
@@ -247,11 +236,12 @@ public class LoginTeacher extends Windows implements ActionListener{
 		}
 	}
 	
-	public void setTmpData(String[] str) {
-		tmpData.removeAllElements();
+	public void addRow(String[] str) {
+		Vector<String> tmp = new Vector<String>();
 		for (String string : str) {
-			this.tmpData.add(string);
+			tmp.add(string);
 		}
+		this.showedPane.addRow(tmp);
 	}
 	
 

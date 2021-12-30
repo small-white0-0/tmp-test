@@ -1,5 +1,8 @@
 package smallTools;
 
+import java.awt.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 public class Tools {
@@ -16,6 +19,14 @@ public class Tools {
 			re[i] = (String)str[i];
 		}
 		return re;
+	}
+	
+	public static String[] makeArray(Object[] str, String ... str1) {
+		ArrayList tmp = new ArrayList(Arrays.asList(str));
+		tmp.addAll(Arrays.asList(str1));
+		
+		return makeArray(tmp.toArray());
+		
 	}
 	
 	public static String[] makeArray(String str, int num) {

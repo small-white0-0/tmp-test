@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.jar.Attributes.Name;
@@ -31,26 +33,24 @@ public class AddGrade extends Add {
 	private JLabel student_warning = new JLabel("学生id不存在");
 	private JLabel course_warning = new JLabel("课程id不存在");
 	private JLabel grade_waring = new JLabel("分数范围是0～100");
-//	private boolean[] flags = new boolean[] {false,false,false};
 	
-	private MouseAdapter mousuListener = new MouseAdapter() {
-		
+	private FocusAdapter focus = new FocusAdapter() {
 
 		@Override
-		public void mouseExited(MouseEvent e) {
+		public void focusLost(FocusEvent e) {
 			// TODO Auto-generated method stub
-			super.mouseExited(e);
+			super.focusLost(e);
 			Object object = e.getSource();
 			if (object == student) {
-				if (DatabaseManager.existIn(student.toString(),TableNames.student)) {
+				if (DatabaseManager.existIn(getStudent(),TableNames.student)) {
 					student_warning.setForeground(Color.green);
 					flags[0] = true;
 				} else {
-					student.setForeground(Color.red);
+					student_warning.setForeground(Color.red);
 					flags[0] = false;
 				}
 			} else if (object == course){
-				if (DatabaseManager.existIn(course.toString(),TableNames.course)) {
+				if (DatabaseManager.existIn(getCourse(),TableNames.course)) {
 					course_warning.setForeground(Color.green);
 					flags[1] = true;
 				} else {
@@ -58,7 +58,7 @@ public class AddGrade extends Add {
 					flags[1] = false;
 				}
 			} else if (object == grade) {
-				if (CheckInputs.checkGrade(grade.toString())) {
+				if (CheckInputs.checkGrade(getGrade())) {
 					grade_waring.setForeground(Color.green);
 					flags[2] = true;
 				} else {
@@ -84,7 +84,7 @@ public class AddGrade extends Add {
 			this.diapose();
 		} else if (object == confirm) {
 			if (isAllRight()) {
-				((LoginTeacher)superWindow).setTmpData(
+				((LoginTeacher)superWindow).addRow(
 						Tools.makeArray(getStudent(),getCourse(),getGrade()));
 				superWindow.getTheFrame().setEnabled(true);
 				this.diapose();
@@ -104,9 +104,9 @@ public class AddGrade extends Add {
 		onePane.setLayout(layout);
 		
 		// add listener
-		student.addMouseListener(mousuListener);
-		course.addMouseListener(mousuListener);
-		grade.addMouseListener(mousuListener);
+		student.addFocusListener(focus);
+		course.addFocusListener(focus);
+		grade.addFocusListener(focus);
 		
 		//set color
 		student_warning.setForeground(Color.red);
@@ -138,15 +138,15 @@ public class AddGrade extends Add {
 	}
 
 	public String getStudent() {
-		return student.toString();
+		return student.getText();
 	}
 
 	public String getCourse() {
-		return course.toString();
+		return course.getText();
 	}
 
 	public String getGrade() {
-		return grade.toString();
+		return grade.getText();
 	}
 
 	public static void main(String[] args) {
