@@ -2,6 +2,7 @@ package databaseTable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -15,8 +16,10 @@ public class MyTableModel extends DefaultTableModel{
 	
 	private int[] disEdit;
 	private String tableName = null;
-	private Procedure procedure;
-	public MyTableModel(String tableName) {
+	private Procedure[] procedures;
+	
+	
+	private MyTableModel(String tableName) {
 		this.tableName = tableName;
 		try {
 			this.columnIdentifiers = SqlOperation.getHeaders(tableName);
@@ -25,6 +28,7 @@ public class MyTableModel extends DefaultTableModel{
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "查表错误");
 		}
+		this.procedures = new Procedure[super.getColumnCount()];
 	}
 	
 	public MyTableModel(String tableName , int[] disEdit) {
@@ -39,9 +43,15 @@ public class MyTableModel extends DefaultTableModel{
 		}
 	}
 	
-	public MyTableModel(String tableName, String id) throws SQLException {
-		this(tableName);
-		this.getTableDataById(id);
+	public MyTableModel(String tableName, int[] disEdit, String str){
+		this(tableName , disEdit);
+		try {
+			this.getTableData(str);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "查表失败");
+		}
 	}
 	
 	public MyTableModel(String tableName,int[] disEdit, String[] attributes, String[] values){
@@ -92,6 +102,7 @@ public class MyTableModel extends DefaultTableModel{
 	}
 	
 	private void getTableData(String[] attributes, String[] values) throws SQLException {
+		this.dataVector.removeAllElements();
 		ResultSet set = SqlOperation.select(tableName, attributes, values);
 		dataVector.removeAllElements();
 		String[] row = new String[columnIdentifiers.size()];
@@ -103,19 +114,39 @@ public class MyTableModel extends DefaultTableModel{
 		}
 	}
 	
-	private void getTableDataById(String id) throws SQLException {
-		getTableData(Tools.makeArray(columnIdentifiers.get(0).toString()),
-				Tools.makeArray(id));
+	private void getTableData(String str) throws SQLException {
+		this.dataVector.removeAllElements();
+		ResultSet set =  SqlOperation.selectLike(tableName, 
+				Tools.makeArray(this.columnIdentifiers.subList(0, getColumnCount()-1).toArray()),
+				Tools.makeArray(str,this.getColumnCount()));
+		String[] row = new String[this.getColumnCount()];
+		while(set.next()) {
+			for (int i = 0; i < row.length; i++) {
+				row[i] = set.getString(this.columnIdentifiers.get(i).toString());
+			}
+			this.addRow(row);
+		}
 	}
 	
 	private void getTableData() throws SQLException{
 		getTableData(null, null);
 	}
 	
-	public void setProcedure(Procedure procedure) {
-		this.procedure = procedure;
+	public void setProcedure(Procedure procedure, int columnIndex) {
+		if (columnIndex >= 0 ) {
+			this.procedures[columnIndex] = procedure;
+		} else if (columnIndex < 0) {
+			this.procedures[this.getColumnCount()+columnIndex] = procedure;
+		}
 	}
 	
+	public void setProcedures(Procedure[] procedures) {
+		this.procedures = procedures;
+	}
+	
+	public Procedure[] getProcedures() {
+		return this.procedures;
+	}
 	@Override
 	public void removeRow(int row) {
 		// TODO Auto-generated method stub
@@ -142,7 +173,8 @@ public class MyTableModel extends DefaultTableModel{
 					Tools.makeArray(super.dataVector.get(row).toArray()));
 		} catch (SQLException e) {
 			// TODO: handle exception
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "修改不合法");
+//			e.printStackTrace();
 			return;
 		}
 		super.setValueAt(aValue, row, column);
@@ -151,8 +183,8 @@ public class MyTableModel extends DefaultTableModel{
 	@Override
 	public Object getValueAt(int row, int column) {
 		// TODO Auto-generated method stub
-		if (procedure!=null && column == this.getColumnCount()-1) {
-			return procedure.set(super.getValueAt(row, column));
+		if (procedures[column] != null ) {
+			return procedures[column].set(super.getValueAt(row, column));
 		} else {
 			return super.getValueAt(row, column);
 		}

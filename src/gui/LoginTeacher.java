@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -23,11 +25,13 @@ import javax.swing.event.MouseInputListener;
 
 import control.WindowsManager;
 import control.WindowsManager.WindowName;
+import databaseTable.row.CourseRow;
 import databaseTable.row.StudentRow;
 import gui.LoginTeacherSubwindows.AddGrade;
 import gui.LoginTeacherSubwindows.AddStudent;
 import gui.LoginTeacherSubwindows.InformationPanel;
 import guiSuperclass.Windows;
+import smallTools.Procedure;
 import smallTools.Tools;
 import sql.SqlOperation;
 
@@ -59,6 +63,47 @@ public class LoginTeacher extends Windows implements ActionListener{
 	
 	public LoginTeacher() {
 		theFrame = createTheFrame("老师");
+		
+		this.studentInformation.setProcedureToTableModel(-1 ,
+				new Procedure() {
+					
+					@Override
+					public Object set(Object data) {
+						// TODO Auto-generated method stub
+						return "******";
+					}
+				});
+		this.gradeInformation.setProcedureToTableModel(-1 ,
+				new Procedure() {
+			
+				@Override
+				public Object set(Object data) {
+					// TODO Auto-generated method stub
+					String re = data.toString();
+					re = Integer.valueOf(re).toString();
+					return re;
+				}
+			});
+//		this.gradeInformation.setProcedureToTableModel(0,
+//				new Procedure() {
+//					
+//					@Override
+//					public Object set(Object data) {
+//						// TODO Auto-generated method stub
+//						Object re = data;
+//						re = StudentRow.getName(data.toString());
+//						return re;
+//					}
+//				});
+//		this.gradeInformation.setProcedureToTableModel(1,
+//				new Procedure() {
+//					
+//					@Override
+//					public Object set(Object data) {
+//						// TODO Auto-generated method stub
+//						return CourseRow.getCourseName(data.toString());
+//					}
+//				});
 	}
 	
 //	public void reset() {

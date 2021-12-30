@@ -92,7 +92,7 @@ public class SqlOperation {
 	}
 	
 	private static String safeTableName(String tableName) {
-		String re = new String();
+		String re = tableName;
 		if (!tableName.matches("final.*")) {
 			re = "final."+tableName;
 		}
@@ -176,8 +176,8 @@ public class SqlOperation {
 		Statement stm = connection.createStatement();
 		String sql = "select "+" * "+" from "+safeTableName(tableName);
 		if (attributes != null && values != null) {
-			for (String string : values) {
-				string = "%"+string+"%";
+			for (int i = 0; i < values.length; i++) {
+				values[i] = "%"+values[i]+"%";
 			}
 			sql+=" where " + linkString(attributes, safeString(values)," like " ," or ");
 		}

@@ -48,6 +48,7 @@ public class InformationPanel extends JPanel implements ActionListener{
 		this.notEditCol = notEditCol;
 		this.tableName = tableName;
 		
+		
 		this.setLayout(new BorderLayout());
 		this.add(createInputPanel(),BorderLayout.NORTH);
 		this.add(createShowPane());
@@ -113,29 +114,23 @@ public class InformationPanel extends JPanel implements ActionListener{
 		return selectedRow;
 	}
 	
-	public void setProcedureToTableModel(Procedure procedure) {
-		this.tableModel.setProcedure(procedure);
+	public void setProcedureToTableModel(int index, Procedure procedure) {
+		this.tableModel.setProcedure(procedure, index);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getSource() == searchButton) {
 			System.out.println("更新表格");
-			try {
-				DatabaseManager.getInfo(tableName,this.searchField.getText());
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			String searchString = this.searchField.getText().toString();
+			Procedure[] tmpProcedures = this.tableModel.getProcedures();
+			if (searchString.equals("")) {
+				this.tableModel = new MyTableModel(tableName, notEditCol);
+			} else {
+				this.tableModel = new MyTableModel(tableName, notEditCol, searchString);
 			}
-			MyTableModel tabelModel = new MyTableModel(tableName, notEditCol);
-			String[] dataRow = DatabaseManager.getInfo(tableName);
-			while (dataRow != null) {
-				tabelModel.addRow(dataRow);
-				dataRow = DatabaseManager.getInfo(tableName);
-			}
-			this.tableModel = tabelModel;
-			this.showTable.setModel(tabelModel);
-			this.firsTableModel = this.tableModel;
+			this.tableModel.setProcedures(tmpProcedures);
+			this.showTable.setModel(tableModel);
 		}
 	}
 }
