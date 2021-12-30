@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.print.attribute.PrintServiceAttribute;
 import javax.swing.ComboBoxModel;
@@ -15,6 +16,7 @@ import javax.swing.ComboBoxModel;
 import databaseTable.row.CourseRow;
 import databaseTable.row.StudentRow;
 import databaseTable.row.StudentWithCourseRow;
+import smallTools.Tools;
 import sql.SqlOperation;
 
 public class DatabaseManager {
@@ -241,8 +243,20 @@ public class DatabaseManager {
 	
 	public static boolean existIn(String str, String tableName) {
 		boolean re = false;
-//		SqlOperation.select;
-		re =true;
+		try {
+			Vector<String> column_name = SqlOperation.getHeaders(tableName);
+			ResultSet set = SqlOperation.selectOr(tableName,
+					Tools.makeArray(column_name),
+					Tools.makeArray(str, column_name.size()));
+			if (set.next()) {
+				re = true;
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return false;
+		}
+		
 		return re;
 	}
 }

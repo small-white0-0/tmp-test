@@ -88,7 +88,10 @@ public class LoginStudent extends Windows implements ActionListener{
 		gradeShow.setBackground(Color.white);
 		gradeShow.setBounds(50, 100, 230, 80);
 		gradeShow.setEditable(false);
-		gradeShow.setText(DatabaseManager.getGrade(classesName.getSelectedItem().toString()));
+		if (classesName.getSelectedItem() != null) {
+			gradeShow.setText(
+					DatabaseManager.getGrade(classesName.getSelectedItem().toString()));
+		}
 		this.gradeShow = gradeShow;
 		
 		//退出按钮
@@ -112,8 +115,10 @@ public class LoginStudent extends Windows implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		Object object = e.getSource();
 		if (object == this.className) {
-			String grade = DatabaseManager.getGrade(className.getSelectedItem().toString());
-			this.gradeShow.setText(grade);
+			if (className.getSelectedItem() != null) {
+				String grade = DatabaseManager.getGrade(className.getSelectedItem().toString());
+				this.gradeShow.setText(grade);
+			}
 		} else {
 			WindowsManager.switchWindowSafe(WindowName.login);
 		}

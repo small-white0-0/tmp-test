@@ -22,7 +22,7 @@ public abstract class Add extends Windows implements ActionListener{
 	protected boolean[] flags;
 	
 	
-	protected void setWindowsListenerToTheFrame() {
+	protected void setWindowsListenerTo(JFrame theFrame) {
 		
 		theFrame.addWindowListener(new WindowAdapter() {
 			
@@ -31,15 +31,7 @@ public abstract class Add extends Windows implements ActionListener{
 				// TODO Auto-generated method stub
 				super.windowOpened(e);
 				superWindow.getTheFrame().setEnabled(false);
-			}
-
-//			@Override
-//			public void windowClosing(WindowEvent e) {
-//				// TODO Auto-generated method stub
-//				super.windowClosing(e);
-//				superWindow.setEnabled(true);
-//			}
-			
+			}			
 		});
 	}
 	
@@ -55,7 +47,7 @@ public abstract class Add extends Windows implements ActionListener{
 		theFrame.setResizable(false);
 		theFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		setWindowsListenerToTheFrame();
+		setWindowsListenerTo(theFrame);
 		return theFrame;
 	}
 	
@@ -82,7 +74,17 @@ public abstract class Add extends Windows implements ActionListener{
 		}
 		return re;
 	}
-
+	
+//	protected boolean isFulled() {
+//		boolean re = true;
+//		for (boolean b : flags) {
+//			if (!b) {
+//				re = false;
+//				break;
+//			}
+//		}
+//		return re;
+//	}
 
 	@Override
 	public void diapose() {

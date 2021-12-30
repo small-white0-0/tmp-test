@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -27,7 +28,7 @@ public class SqlOperation {
 		}
 
 	    try {
-	    	connection = DriverManager.getConnection("jdbc:mysql://localhost/test", "tt", "pwd123");
+	    	connection = DriverManager.getConnection("jdbc:mysql://localhost/final", "tt", "pwd123");
 
 		} catch (SQLException e) {
 			// TODO: handle exception
@@ -67,10 +68,11 @@ public class SqlOperation {
 	}
 	
 	private static String[] safeString(String[] str) {
+		String[] re = new String[str.length];
 		for (int i = 0; i < str.length; i++) {
-			str[i] = "'"+str[i]+"'";
+			re[i] = "'"+str[i]+"'";
 		}
-		return str;
+		return re;
 	}
 	
 	private static String linkString(String[] string1, String[] string2 , String s) {
@@ -89,11 +91,19 @@ public class SqlOperation {
 		return linkString(re, s);
 	}
 	
+	private static String safeTableName(String tableName) {
+		String re = new String();
+		if (!tableName.matches("final.*")) {
+			re = "final."+tableName;
+		}
+		return re;
+	}
+	
 	public static void add(String tableName, String[] attributes, String[] values) throws SQLException {
 		if (connection == null) {
 			sqlConnetct();
 		}
-		String sql = "INSERT INTO "+tableName+"("+linkString(attributes, ",")+")"+ " VALUES ("+linkString(safeString(values), ",")+")";
+		String sql = "INSERT INTO "+safeTableName(tableName)+"("+linkString(attributes, ",")+")"+ " VALUES ("+linkString(safeString(values), ",")+")";
 		Statement stm = connection.createStatement();
 		System.out.println(sql);
 		stm.execute(sql+";");
@@ -105,7 +115,7 @@ public class SqlOperation {
 			sqlConnetct();
 		}
 		Statement stm = connection.createStatement();
-		String sql = "delete from "+tableName+" where "+linkString(attributes, safeString(values)," and ");
+		String sql = "delete from "+safeTableName(tableName)+" where "+linkString(attributes, safeString(values)," and ");
 		System.out.println(sql);
 		stm.execute(sql);
 		
@@ -117,7 +127,7 @@ public class SqlOperation {
 		}
 		
 		Statement stm = connection.createStatement();
-		String sql = "update "+tableName+" set "+linkString(setAttributes, safeString(setValues), ",");
+		String sql = "update "+safeTableName(tableName)+" set "+linkString(setAttributes, safeString(setValues), ",");
 		sql += " where "+linkString(attributes, safeString(values), " and ");
 		System.out.println(sql);
 		stm.execute(sql+";");
@@ -129,7 +139,7 @@ public class SqlOperation {
 		}
 		
 		Statement stm = connection.createStatement();
-		String sql = "update "+tableName+" set "+setAttributes + "= '" + setValues+"'";
+		String sql = "update "+safeTableName(tableName)+" set "+setAttributes + "= '" + setValues+"'";
 		sql += " where "+linkString(attributes, safeString(values), " and ");
 		System.out.println(sql);
 		stm.execute(sql+";");
@@ -140,7 +150,7 @@ public class SqlOperation {
 			sqlConnetct();
 		}
 		Statement stm = connection.createStatement();
-		String sql = "select "+linkString(colNames, ",")+" from "+tableName;
+		String sql = "select "+linkString(colNames, ",")+" from "+safeTableName(tableName);
 		if (attributes != null && values != null) {
 			sql+=" where " + linkString(attributes, safeString(values), " and ");
 		}
@@ -152,7 +162,7 @@ public class SqlOperation {
 			sqlConnetct();
 		}
 		Statement stm = connection.createStatement();
-		String sql = "select "+" * "+" from "+tableName;
+		String sql = "select "+" * "+" from "+safeTableName(tableName);
 		if (attributes != null && values != null) {
 			sql+=" where " + linkString(attributes, safeString(values), " and ");
 		}
@@ -164,7 +174,7 @@ public class SqlOperation {
 			sqlConnetct();
 		}
 		Statement stm = connection.createStatement();
-		String sql = "select "+" * "+" from "+tableName;
+		String sql = "select "+" * "+" from "+safeTableName(tableName);
 		if (attributes != null && values != null) {
 			for (String string : values) {
 				string = "%"+string+"%";
@@ -180,7 +190,7 @@ public class SqlOperation {
 			sqlConnetct();
 		}
 		Statement stm = connection.createStatement();
-		String sql = "select "+" * "+" from "+tableName;
+		String sql = "select "+" * "+" from "+safeTableName(tableName);
 		if (attributes != null && values != null) {
 			sql+=" where " + linkString(attributes, safeString(values), " or ");
 		}
@@ -194,27 +204,28 @@ public class SqlOperation {
 		return connection;
 	}
 	
-	public static ResultSet getHeaders(String tableName) throws SQLException {
+	public static Vector<String> getHeaders(String tableName) throws SQLException {
 		if (connection == null) {
 			sqlConnetct();
 		}
-		PreparedStatement ps = connection.prepareStatement("select COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_NAME='?' ;");
-		ps.setString(1, tableName);
-		return ps.executeQuery();
-	}
-	
-	public static String[] makeArray(String ... str) {
-		String[] re = new String[str.length];
-		re = str.clone();
+		Statement stm = connection.createStatement();
+		String sql = "select column_name from information_schema.columns where table_schema = 'final' and table_name=";
+		sql += "'"+tableName+"'";
+		ResultSet set = stm.executeQuery(sql+";");
+		Vector<String> re = new Vector<String>();
+		while (set.next()) {
+			re.add(set.getString("column_name"));
+		}
 		return re;
 	}
+	
 	public static void main(String[] args) throws SQLException {
 		SqlOperation.sqlConnetct();
 		System.out.println("ok");
 //		ResultSet set = SqlOperation.add("final.course", makeArray("*"), makeArray("id"),makeArray("1"));
 //		SqlOperation.add("course", makeArray("course","credit"), makeArray("chinese","3"));
-		SqlOperation.update("final.course", makeArray("credit","course"), makeArray("10","chinese"), makeArray("course"), makeArray("10"));
-		SqlOperation.delete("final.course", makeArray("course"), makeArray("chinese"));
+//		SqlOperation.update("final.course", makeArray("credit","course"), makeArray("10","chinese"), makeArray("course"), makeArray("10"));
+//		SqlOperation.delete("final.course", makeArray("course"), makeArray("chinese"));
 //		set.next();
 //		System.out.println(set.getString("course"));
 	}

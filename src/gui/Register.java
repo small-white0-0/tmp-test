@@ -96,7 +96,7 @@ public class Register extends Before_login implements ActionListener {
 			
 		} else if (e.getSource() == this.rightButton) {
 			
-			if (! CheckInputs.checkid(this.getId())) {
+			if (! CheckInputs.checkId(this.getId())) {
 				this.warning.setText(idWarning);
 			} else if (! getFirstPasswd().equals(getSencondPasswd())){
 				this.warning.setText(pwdWarning);

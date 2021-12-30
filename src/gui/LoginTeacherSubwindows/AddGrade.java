@@ -10,6 +10,7 @@ import java.util.jar.Attributes.Name;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.plaf.TextUI;
@@ -81,11 +82,16 @@ public class AddGrade extends Add {
 		if (object == cancel) {
 			superWindow.getTheFrame().setEnabled(true);
 			this.diapose();
-		} else if (object == confirm && isAllRight()) {
-			((LoginTeacher)superWindow).setTmpData(
-					Tools.makeArray(getStudent(),getCourse(),getGrade()));
-			superWindow.getTheFrame().setEnabled(true);
-			this.diapose();
+		} else if (object == confirm) {
+			if (isAllRight()) {
+				((LoginTeacher)superWindow).setTmpData(
+						Tools.makeArray(getStudent(),getCourse(),getGrade()));
+				superWindow.getTheFrame().setEnabled(true);
+				this.diapose();
+			} else {
+				JOptionPane.showMessageDialog(null, "请正确填写");
+			}
+			
 		}
 	}
 

@@ -12,12 +12,7 @@ import gui.Register;
 import guiSuperclass.Windows;
 
 public class WindowsManager {
-//	
-//	public static final int REGISTER = 0;
-//	public static final int LOGIN = 1;
-//	public static final int STUDENT = 2;
-//	public static final int TEACHER = 3;
-	
+
 	public enum WindowName{
 		register, login, student, teacher
 	}

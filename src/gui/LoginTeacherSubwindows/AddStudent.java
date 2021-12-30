@@ -1,21 +1,16 @@
 package gui.LoginTeacherSubwindows;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Calendar;
-import java.util.function.ToLongBiFunction;
+import java.util.Iterator;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -33,8 +28,6 @@ public class AddStudent extends Add {
 	
 	private JLabel id_waring = new JLabel("id需要12位");
 	private JLabel name_waring = new JLabel("name不能为空");
-	
-//	private boolean[] flags = new boolean[] {false,false};	
 	
 	private MouseAdapter mouseListener = new MouseAdapter() {
 
@@ -70,21 +63,6 @@ public class AddStudent extends Add {
 		theFrame = createTheFrame("学生添加界面");
 	}
 	
-//	private JFrame createTheFrame(String windowName) {
-//		JFrame theFrame = new JFrame(windowName);
-//		theFrame.getContentPane().add(createPanel());
-//		theFrame.getContentPane().add(createLabels(), BorderLayout.WEST);
-//		theFrame.getContentPane().add(createButtons(), BorderLayout.SOUTH);
-//		//set attributes of theFrame
-//		theFrame.setSize(400, 240);
-//		theFrame.setLocationRelativeTo(null);
-//		theFrame.setResizable(false);
-////		theFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		
-////		setWindowsListenerToTheFrame();
-//		return theFrame;
-//	}
-	
 	protected JPanel createPanel() {
 		JPanel onePanel = new JPanel();
 		
@@ -93,8 +71,6 @@ public class AddStudent extends Add {
 		
 		onePanel.setLayout(layout );
 		
-//		id.addActionListener(this);
-//		name.addActionListener(this);
 		id.addMouseListener(mouseListener);
 		name.addMouseListener(mouseListener);
 		
@@ -128,6 +104,7 @@ public class AddStudent extends Add {
 		return labelsPane;
 	}
 	
+	
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object object = e.getSource();
@@ -135,8 +112,14 @@ public class AddStudent extends Add {
 			superWindow.getTheFrame().setEnabled(true);
 			this.diapose();
 		} else if (object == confirm) {
-			((LoginTeacher)superWindow).setTmpData(Tools.makeArray(getId(),getName(),getSchoolClass(),getMajor()));
-			this.diapose();
+			if (isAllRight()) {
+				((LoginTeacher)superWindow).setTmpData(
+						Tools.makeArray(getId(),getName(),getSchoolClass(),getMajor()));
+				this.diapose();
+			} else {
+				JOptionPane.showMessageDialog(null, "请正确填写");
+			}
+			
 		}
 	}
 
