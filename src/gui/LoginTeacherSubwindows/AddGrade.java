@@ -42,19 +42,23 @@ public class AddGrade extends Add {
 			super.focusLost(e);
 			Object object = e.getSource();
 			if (object == student) {
-				if (DatabaseManager.existIn(getStudent(),TableNames.student)) {
+				if (DatabaseManager.existIn(TableNames.student, getStudent())) {
 					student_warning.setForeground(Color.green);
+					student.setToolTipText(DatabaseManager.getString(TableNames.student, getStudent()));
 					flags[0] = true;
 				} else {
+					student.setToolTipText(null);
 					student_warning.setForeground(Color.red);
 					flags[0] = false;
 				}
 			} else if (object == course){
-				if (DatabaseManager.existIn(getCourse(),TableNames.course)) {
+				if (DatabaseManager.existIn(TableNames.course, getCourse())) {
 					course_warning.setForeground(Color.green);
+					course.setToolTipText(DatabaseManager.getString(TableNames.course, getCourse()));
 					flags[1] = true;
 				} else {
 					course_warning.setForeground(Color.red);
+					course.setToolTipText(null);
 					flags[1] = false;
 				}
 			} else if (object == grade) {

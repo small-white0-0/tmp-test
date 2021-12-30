@@ -4,4 +4,5 @@ public class TableNames {
 	public static String student = "student";
 	public static String teacher = "teacher";
 	public static String course = "course";
+	public static String studentWithCourse = "studentWithCourse";
 }

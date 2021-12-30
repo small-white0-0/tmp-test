@@ -45,7 +45,7 @@ public class AddStudent extends Add {
 			super.focusLost(e);
 			Object object = e.getSource();
 			if (object == id) {
-				if (CheckInputs.checkId(getId()) && DatabaseManager.existIn(TableNames.student, getId())) {
+				if (CheckInputs.checkId(getId()) && !DatabaseManager.existIn(TableNames.student, getId())) {
 					id_waring.setForeground(Color.green);
 					flags[0] = true;
 				} else {

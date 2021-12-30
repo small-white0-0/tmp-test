@@ -241,13 +241,13 @@ public class DatabaseManager {
 		return re;
 	}
 	
-	public static boolean existIn(String str, String tableName) {
+	public static boolean existIn(String tableName, String id) {
 		boolean re = false;
 		try {
-			Vector<String> column_name = SqlOperation.getHeaders(tableName);
+//			Vector<String> column_name = SqlOperation.getHeaders(tableName);
 			ResultSet set = SqlOperation.selectOr(tableName,
-					Tools.makeArray(column_name),
-					Tools.makeArray(str, column_name.size()));
+					Tools.makeArray("id"),
+					Tools.makeArray(id));
 			if (set.next()) {
 				re = true;
 			}
@@ -257,6 +257,23 @@ public class DatabaseManager {
 			return false;
 		}
 		
+		return re;
+	}
+	
+	public static String getString(String tableName, String id) {
+		String re = null;
+		try {
+			ResultSet set = SqlOperation.select(
+					tableName,
+					Tools.makeArray("id"),
+					Tools.makeArray(id));
+			if (set.next()) {
+				re = set.getString(2);
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		return re;
 	}
 }

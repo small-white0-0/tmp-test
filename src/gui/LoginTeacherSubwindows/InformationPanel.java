@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Vector;
@@ -16,6 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToolTip;
+import javax.swing.ToolTipManager;
 import javax.swing.table.DefaultTableModel;
 
 import control.DatabaseManager;
@@ -23,6 +27,8 @@ import databaseTable.MyTableModel;
 import databaseTable.row.DatabaseTable;
 import databaseTable.row.StudentRow;
 import smallTools.Procedure;
+import smallTools.TableNames;
+import smallTools.ToolTip;
 
 public class InformationPanel extends JPanel implements ActionListener{
 
@@ -40,20 +46,17 @@ public class InformationPanel extends JPanel implements ActionListener{
 	private String tableName;
 	
 	public InformationPanel(String tableName, String[] headers, int[] notEditCol) {
-//		this.databaseTable = databaseTable;
-//		this.headers = headers;
-//		for (String string : headers) {
-//			this.columnNames.add(string);
-//		}
 		this.notEditCol = notEditCol;
 		this.tableName = tableName;
 		
+		ToolTipManager.sharedInstance().setInitialDelay(100);
 		
 		this.setLayout(new BorderLayout());
 		this.add(createInputPanel(),BorderLayout.NORTH);
 		this.add(createShowPane());
 		this.setBackground(Color.white);
-		this.setOpaque(true);
+//		this.setOpaque(true);
+		setMyToolTip();
 	}
 	
 	private JPanel createInputPanel() {
@@ -77,19 +80,47 @@ public class InformationPanel extends JPanel implements ActionListener{
 		
 		MyTableModel tableModel = null;
 		tableModel = new MyTableModel(tableName, notEditCol);
-		
-//		tableModel.addRow(new String[] {"null"});
 		this.tableModel = tableModel;
 		this.firsTableModel = tableModel;
+		
 		JTable showTable = new JTable(tableModel);
+		showTable.setToolTipText("ok");
 		showTable.setRowHeight(30);
 		showTable.getTableHeader().setReorderingAllowed(false);
 		this.showTable = showTable;
-		
 		showPane.setViewportView(showTable);
 		
 		return showPane;
 		
+	}
+	
+	private void setMyToolTip() {
+		
+		if (tableName.equals(TableNames.studentWithCourse)) {
+			showTable.addMouseListener(new MouseAdapter() {
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// TODO Auto-generated method stub
+					super.mouseClicked(e);
+					int selectedRow = showTable.getSelectedRow();
+					int selectedColumn = showTable.getSelectedColumn();
+//					if (!showTable.isCellEditable(
+//							selectedRow,
+//							selectedColumn)) {
+					if(selectedColumn == 0 || selectedColumn == 1) {
+						showTable.setToolTipText(DatabaseManager.getString(
+								tableModel.getColumnName(selectedColumn).replaceAll("Id", ""),
+								tableModel.getValueAt(selectedRow, selectedColumn).toString()));
+					} else {
+						showTable.setToolTipText(null);
+					}
+					
+					ToolTipManager.sharedInstance().mouseMoved(e);
+				}
+				
+			});
+		}
 	}
 	
 	public void scrollToRow(int row){
@@ -133,4 +164,16 @@ public class InformationPanel extends JPanel implements ActionListener{
 			this.showTable.setModel(tableModel);
 		}
 	}
+	
+	@Override
+	 public String getToolTipText(MouseEvent event)
+
+     {
+
+         return event.getPoint().toString();
+
+     }
+	
 }
+
+

@@ -166,6 +166,7 @@ public class SqlOperation {
 		if (attributes != null && values != null) {
 			sql+=" where " + linkString(attributes, safeString(values), " and ");
 		}
+		System.out.println(sql);
 		return stm.executeQuery(sql+";");
 	}
 	
@@ -181,6 +182,7 @@ public class SqlOperation {
 			}
 			sql+=" where " + linkString(attributes, safeString(values)," like " ," or ");
 		}
+		System.out.println(sql);
 		return stm.executeQuery(sql+";");
 		
 	}
@@ -194,6 +196,7 @@ public class SqlOperation {
 		if (attributes != null && values != null) {
 			sql+=" where " + linkString(attributes, safeString(values), " or ");
 		}
+		System.out.println(sql);
 		return stm.executeQuery(sql+";");
 	}
 	
@@ -216,6 +219,7 @@ public class SqlOperation {
 		while (set.next()) {
 			re.add(set.getString("column_name"));
 		}
+		System.out.println(sql);
 		return re;
 	}
 	
