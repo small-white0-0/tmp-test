@@ -28,7 +28,6 @@ import databaseTable.row.DatabaseTable;
 import databaseTable.row.StudentRow;
 import smallTools.Procedure;
 import smallTools.TableNames;
-import smallTools.ToolTip;
 
 public class InformationPanel extends JPanel implements ActionListener{
 
@@ -84,7 +83,6 @@ public class InformationPanel extends JPanel implements ActionListener{
 		this.firsTableModel = tableModel;
 		
 		JTable showTable = new JTable(tableModel);
-		showTable.setToolTipText("ok");
 		showTable.setRowHeight(30);
 		showTable.getTableHeader().setReorderingAllowed(false);
 		this.showTable = showTable;

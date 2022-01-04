@@ -95,7 +95,7 @@ public class LoginStudent extends Windows implements ActionListener{
 		this.gradeShow = gradeShow;
 		
 		//退出按钮
-		JButton exitButton = new JButton("退出");
+		JButton exitButton = new JButton("exit");
 		exitButton.setBounds(260, 300, 70, 60);
 		exitButton.addActionListener(this);
 		grade.add(exitButton);

@@ -16,15 +16,13 @@ import javax.swing.ComboBoxModel;
 import databaseTable.row.CourseRow;
 import databaseTable.row.StudentRow;
 import databaseTable.row.StudentWithCourseRow;
+import smallTools.TableNames;
 import smallTools.Tools;
 import sql.SqlOperation;
 
 public class DatabaseManager {
 
 	private static StudentRow stu;
-	private static ResultSet info_set_stu;
-//	private static ResultSet info_set_course;
-	
 	public static boolean loginToStu(String id, String password) {
 		boolean re = login("student", id, password);
 		if (re) {
@@ -107,7 +105,7 @@ public class DatabaseManager {
 		String[] courseNames = new String[courseIds.length];
 		for (int i = 0; i < courseIds.length; i++) {
 			try {
-				ResultSet set = SqlOperation.select(CourseRow.tabelName, makeArray("*"), makeArray("id"),makeArray(courseIds[i]));
+				ResultSet set = SqlOperation.select(TableNames.course , makeArray("*"), makeArray("id"),makeArray(courseIds[i]));
 				set.next();
 				courseNames[i] = set.getString("course");
 			} catch (SQLException e) {
@@ -150,95 +148,6 @@ public class DatabaseManager {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-	}
-	
-	public static void getInfo(String tableName, String regex) throws SQLException{
-		if (tableName.equals("student")) {
-			if (regex.equals("*")) {
-				info_set_stu = SqlOperation.selectLike("final."+tableName, null, null);
-			} else {
-				info_set_stu = SqlOperation.selectLike("final."+tableName, 
-						makeArray("id","name","schoolClass","major"), 
-						makeArray(regex,regex,regex,regex));
-				
-			}
-		}else if (tableName.equals("studentWithCourse")) {
-			
-			if (regex.equals("*")) {
-				info_set_stu = SqlOperation.selectLike("final."+tableName, null, null);
-//				info_set_stu = SqlOperation.selectOr("final.student", null,null);
-//				info_set_course = SqlOperation.select("final.course" ,null, null);
-			} else {
-				info_set_stu = SqlOperation.select("final."+tableName, makeArray("studentId","courseId"), makeArray(regex,regex));
-				///
-//				Connection con = SqlOperation.getConnection();
-//				String sql = "select * from final.student where id=? OR name=? or schoolClass=? or major=?;";
-//				PreparedStatement ps = con.prepareStatement(sql);
-//				for(int i =1;i<7;i++) {
-//					ps.setString(1, regex);
-//				}
-//				info_set_stu = ps.executeQuery();
-//				
-//				sql = "select * from final.course where id=? or course=? ";
-//				ps = con.prepareStatement(sql);
-//				for(int i =1;i<3;i++) {
-//					ps.setString(1, regex);
-//				}
-//				info_set_course = ps.executeQuery();
-				////
-				
-			}
-			
-		
-		}
-	}
-	public static String[] getInfo(String tableName) {
-		String[] re = null;
-		try {
-			if (info_set_stu.next()) {
-				 re = new String[4];
-				if (tableName.equals("student")) {
-					re[0] = info_set_stu.getString("id");
-					re[1] = info_set_stu.getString("name");
-					re[2] = info_set_stu.getString("schoolClass");
-					re[3] = info_set_stu.getString("major");
-				} else {
-//					String[] tmp;
-//					while (true) {
-//						if (info_set_stu.next()) {
-//							tmp = StudentWithCourseRow.getGrade1(info_set_stu.getString("id"));
-//							if (tmp != null) {
-//								re[0] = info_set_stu.getString("id");
-//								re[1] = info_set_stu.getNString("name");
-//								re[2] = CourseRow.getCourseName(tmp[1]);
-//								re[3] = tmp[0];
-//								break;
-//							}
-//						}else if (info_set_course.next()) {
-//							tmp = StudentWithCourseRow.getGrade2(info_set_course.getString("id"));
-//							if (tmp != null) {
-//								re[0] = tmp[1];
-//								re[1] = StudentRow.getName(tmp[1]);
-//								re[2] = info_set_course.getString("course");
-//								re[3] = tmp[0];
-//								break;
-//							}
-//						} else {
-//							re = null;
-//							break;
-//						}
-//					}
-					re[0] = info_set_stu.getString("studentId");
-					re[1] = StudentRow.getName(re[0]);
-					re[2] = CourseRow.getCourseName(info_set_stu.getString("courseId"));
-					re[3] = Integer.valueOf(info_set_stu.getString("grade")).toString();
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		return re;
 	}
 	
 	public static boolean existIn(String tableName, String id) {
